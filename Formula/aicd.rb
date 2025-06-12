@@ -1,8 +1,8 @@
 class Aicd < Formula
-  version "0.1.1"
   desc      "AI Code Agent Context management tool"
   homepage  "https://github.com/morooka-akira/aicd"
-  license   "MIT"
+  version "0.1.1"
+  license "MIT"
 
   on_macos do
     on_arm do
@@ -12,7 +12,7 @@ class Aicd < Formula
 
     on_intel do
       url     "https://github.com/morooka-akira/aicd/releases/download/v#{version}/aicd-x86_64-apple-darwin"
-      sha256  "PUT_SHA256_FOR_INTEL_MAC_HERE"
+      sha256  "0000000000000000000000000000000000000000000000000000000000000000"
     end
   end
 
@@ -24,12 +24,12 @@ class Aicd < Formula
 
     on_arm do
       url     "https://github.com/morooka-akira/aicd/releases/download/v#{version}/aicd-aarch64-unknown-linux-gnu"
-      sha256  "PUT_SHA256_FOR_LINUX_ARM_HERE"
+      sha256  "0000000000000000000000000000000000000000000000000000000000000000"
     end
   end
 
   def install
-    bin.install "#{cached_download.basename}" => "aicd"
+    bin.install cached_download.basename => "aicd"
   end
 
   test do
