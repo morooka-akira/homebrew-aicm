@@ -1,18 +1,23 @@
 class Aicd < Formula
   desc "AI Code Development tool"
   homepage "https://github.com/morooka-akira/homebrew-aicm"
-  url "https://github.com/morooka-akira/homebrew-aicm/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "fedf2fa94b4d43346002ef718846237617eb9d971740e7fab0453567f16db0e6"
+  
+  if OS.mac?
+    url "https://github.com/morooka-akira/homebrew-aicm/releases/download/v0.1.1/aicm-aarch64-apple-darwin"
+    sha256 "305a102fffe28b89072034435cbe0c22db74a895bae44102fdd07c94fe38cf5c"
+  elsif OS.linux?
+    url "https://github.com/morooka-akira/homebrew-aicm/releases/download/v0.1.1/aicm-x86_64-unknown-linux-gnu"
+    sha256 "594cceb248e02383952b56a1050bea5271eaf0ec1f472bfdda090ea995604644"
+  end
+  
   license "MIT"
 
   bottle do
-    root_url "https://github.com/morooka-akira/homebrew-aicm/releases/download/v0.1.0"
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "5693cda447ac49438b3454e2e2c846a2b1404e1935c1120b2d6631cce69baec5"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "5f03ca9507915f14d58a7e30721271a996ec0d5db5b0d447c59c9ceed825847a"
   end
 
   def install
-    bin.install "aicd"
+    bin.install Dir["*"].first => "aicd"
   end
 
   test do
