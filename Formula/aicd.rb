@@ -1,26 +1,38 @@
 class Aicd < Formula
-  desc "AI Code Development tool"
-  homepage "https://github.com/morooka-akira/homebrew-aicm"
+  version "0.1.1"
+  desc      "AI Code Agent Context management tool"
+  homepage  "https://github.com/morooka-akira/aicd"
+  license   "MIT"
 
-  if OS.mac?
-    url "https://github.com/morooka-akira/homebrew-aicm/releases/download/v0.1.1/aicm-aarch64-apple-darwin"
-    sha256 "305a102fffe28b89072034435cbe0c22db74a895bae44102fdd07c94fe38cf5c"
-  elsif OS.linux?
-    url "https://github.com/morooka-akira/homebrew-aicm/releases/download/v0.1.1/aicm-x86_64-unknown-linux-gnu"
-    sha256 "594cceb248e02383952b56a1050bea5271eaf0ec1f472bfdda090ea995604644"
+  on_macos do
+    on_arm do
+      url     "https://github.com/morooka-akira/aicd/releases/download/v#{version}/aicd-aarch64-apple-darwin"
+      sha256  "305a102fffe28b89072034435cbe0c22db74a895bae44102fdd07c94fe38cf5c"
+    end
+
+    on_intel do
+      url     "https://github.com/morooka-akira/aicd/releases/download/v#{version}/aicd-x86_64-apple-darwin"
+      sha256  "PUT_SHA256_FOR_INTEL_MAC_HERE"
+    end
   end
 
-  license "MIT"
+  on_linux do
+    on_intel do
+      url     "https://github.com/morooka-akira/aicd/releases/download/v#{version}/aicd-x86_64-unknown-linux-gnu"
+      sha256  "594cceb248e02383952b56a1050bea5271eaf0ec1f472bfdda090ea995604644"
+    end
 
-  bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "5f03ca9507915f14d58a7e30721271a996ec0d5db5b0d447c59c9ceed825847a"
+    on_arm do
+      url     "https://github.com/morooka-akira/aicd/releases/download/v#{version}/aicd-aarch64-unknown-linux-gnu"
+      sha256  "PUT_SHA256_FOR_LINUX_ARM_HERE"
+    end
   end
 
   def install
-    bin.install Dir["*"].first => "aicd"
+    bin.install "#{cached_download.basename}" => "aicd"
   end
 
   test do
-    system bin/"aicd", "--version"
+    assert_match version.to_s, shell_output("#{bin}/aicd --version")
   end
 end
