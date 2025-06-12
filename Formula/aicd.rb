@@ -7,14 +7,14 @@ class Aicd < Formula
   on_macos do
     on_arm do
       url     "https://github.com/morooka-akira/aicd/releases/download/v#{version}/aicd-aarch64-apple-darwin"
-      sha256  "305a102fffe28b89072034435cbe0c22db74a895bae44102fdd07c94fe38cf5c"
+      sha256  "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
     end
   end
 
   on_linux do
     on_intel do
       url     "https://github.com/morooka-akira/aicd/releases/download/v#{version}/aicd-x86_64-unknown-linux-gnu"
-      sha256  "594cceb248e02383952b56a1050bea5271eaf0ec1f472bfdda090ea995604644"
+      sha256  "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
     end
   end
 
