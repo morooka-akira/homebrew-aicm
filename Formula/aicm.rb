@@ -3,6 +3,13 @@ class Aicm < Formula
   homepage  "https://github.com/morooka-akira/aicm"
   license "MIT"
 
+  bottle do
+    root_url "https://github.com/morooka-akira/homebrew-aicm/releases/download/aicm-64-unknown-linux-gnu"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a221c9fd5427c22f7189f78d705bf1d9663ef40f7550343a8f2346a47fb70039"
+    sha256 cellar: :any_skip_relocation, ventura:       "f6d5a5f3cd7919fce526d850bfd0acd954a57d6f940000003752699ffad8ca01"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "82e93d6b6dbee9642e9afb8c8aae1ee5dc08354af1aa02820e09a8a88ca7e2bb"
+  end
+
   on_macos do
     on_arm do
       url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.1/aicm-aarch64-apple-darwin",
