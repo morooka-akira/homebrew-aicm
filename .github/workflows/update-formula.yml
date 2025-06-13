@@ -145,14 +145,17 @@ jobs:
         fi
         
         # Commit changes
-        git commit -m "Update aicm to v${VERSION}
-
-- Update all platform binaries to v${VERSION}
-- Update SHA256 hashes for all supported platforms
-- Update version in test assertion
-- Remove bottle section for new version
-
-🤖 Generated with GitHub Actions"
+        git commit -m "$(cat <<EOF
+        Update aicm to v${VERSION}
+        
+        - Update all platform binaries to v${VERSION}
+        - Update SHA256 hashes for all supported platforms
+        - Update version in test assertion
+        - Remove bottle section for new version
+        
+        🤖 Generated with GitHub Actions
+        EOF
+        )"
 
     - name: Push branch and create PR
       env:
