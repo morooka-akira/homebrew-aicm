@@ -72,10 +72,12 @@ jobs:
         done
         
         # Export to environment for next steps
-        echo "MACOS_ARM64_SHA256=${PLATFORMS[aarch64-apple-darwin]}" >> $GITHUB_ENV
-        echo "MACOS_INTEL_SHA256=${PLATFORMS[x86_64-apple-darwin]}" >> $GITHUB_ENV
-        echo "LINUX_X86_64_SHA256=${PLATFORMS[x86_64-unknown-linux-gnu]}" >> $GITHUB_ENV
-        echo "LINUX_ARM64_SHA256=${PLATFORMS[aarch64-unknown-linux-gnu]}" >> $GITHUB_ENV
+        {
+          echo "MACOS_ARM64_SHA256=${PLATFORMS[aarch64-apple-darwin]}"
+          echo "MACOS_INTEL_SHA256=${PLATFORMS[x86_64-apple-darwin]}"
+          echo "LINUX_X86_64_SHA256=${PLATFORMS[x86_64-unknown-linux-gnu]}"
+          echo "LINUX_ARM64_SHA256=${PLATFORMS[aarch64-unknown-linux-gnu]}"
+        } >> "$GITHUB_ENV"
 
     - name: Update formula
       run: |
