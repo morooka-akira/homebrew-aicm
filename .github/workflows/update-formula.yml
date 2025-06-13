@@ -144,18 +144,8 @@ jobs:
           exit 0
         fi
         
-        # Commit changes
-        git commit -m "$(cat <<EOF
-        Update aicm to v${VERSION}
-        
-        - Update all platform binaries to v${VERSION}
-        - Update SHA256 hashes for all supported platforms
-        - Update version in test assertion
-        - Remove bottle section for new version
-        
-        🤖 Generated with GitHub Actions
-        EOF
-        )"
+        # Commit changes  
+        git commit -m "Update aicm to v${VERSION} - Update all platform binaries - Update SHA256 hashes - Update version assertion - Remove bottle section - Generated with GitHub Actions"
 
     - name: Push branch and create PR
       env:
@@ -170,20 +160,7 @@ jobs:
         # Create PR
         gh pr create \
           --title "Update aicm to v${VERSION}" \
-          --body "## Summary
-- Update aicm formula to v${VERSION} with latest binary releases
-- Update SHA256 hashes for all 4 supported platforms (macOS ARM64/Intel, Linux x86_64/ARM64)
-- Update version assertion in test block
-- Remove bottle section to allow fresh bottle generation
-
-## Test plan
-- [x] Calculated SHA256 hashes for all platform binaries
-- [x] Updated Formula/aicm.rb with new version URLs and hashes
-- [x] Passed \`brew style\` validation
-- [x] Passed \`brew audit\` validation  
-- [x] Passed \`brew readall\` syntax check
-
-🤖 Generated with GitHub Actions" \
+          --body "Update aicm formula to v${VERSION} with latest binary releases and SHA256 hashes. Generated with GitHub Actions." \
           --base main \
           --head "$BRANCH_NAME"
         

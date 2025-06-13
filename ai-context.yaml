@@ -1,0 +1,8 @@
+version: '1.0'
+output_mode: null
+base_docs_dir: ./docs
+agents:
+  cursor: false
+  cline: false
+  github: false
+  claude: false
