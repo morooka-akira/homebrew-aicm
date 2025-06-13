@@ -21,6 +21,11 @@ class Aicd < Formula
       url     "https://github.com/morooka-akira/aicm/releases/download/v#{version}/aicm-x86_64-unknown-linux-gnu"
       sha256  "d34ea479b0530b3d83708807edab99a0ae8cb4e8a3ea148999d0a2d0b03ae931"
     end
+
+    on_arm do
+      url     "https://github.com/morooka-akira/aicm/releases/download/v#{version}/aicm-aarch64-unknown-linux-gnu"
+      sha256  "b13e0ba31df92633e92874dd4218232117fe9194d333129e02144100dbc5cfad"
+    end
   end
 
   def install
