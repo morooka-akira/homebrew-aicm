@@ -4,11 +4,7 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'Formula/aicm.rb'
   pull_request:
-    paths:
-      - 'Formula/aicm.rb'
 
 jobs:
   test-bot:
