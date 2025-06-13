@@ -1,0 +1,192 @@
+name: Update Formula Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic version (e.g., 0.1.3)'
+        required: true
+        type: string
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: main
+        fetch-depth: 0
+
+    - name: Set up Homebrew
+      id: set-up-homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+
+    - name: Validate version format
+      run: |
+        if [[ ! "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "Error: Version must be in semantic version format (e.g., 0.1.3)"
+          exit 1
+        fi
+
+    - name: Check if version exists in GitHub releases
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        RELEASE_URL="https://api.github.com/repos/morooka-akira/aicm/releases/tags/v${VERSION}"
+        
+        if ! curl -s --head --fail "$RELEASE_URL" > /dev/null; then
+          echo "Error: Release v${VERSION} does not exist in morooka-akira/aicm repository"
+          exit 1
+        fi
+        echo "Release v${VERSION} found"
+
+    - name: Download binaries and calculate SHA256
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        BASE_URL="https://github.com/morooka-akira/aicm/releases/download/v${VERSION}"
+        
+        # Download all platform binaries and calculate SHA256
+        declare -A PLATFORMS=(
+          ["aarch64-apple-darwin"]=""
+          ["x86_64-apple-darwin"]=""
+          ["x86_64-unknown-linux-gnu"]=""
+          ["aarch64-unknown-linux-gnu"]=""
+        )
+        
+        for platform in "${!PLATFORMS[@]}"; do
+          echo "Downloading aicm-${platform}..."
+          curl -sL "${BASE_URL}/aicm-${platform}" -o "aicm-${platform}"
+          
+          if [ ! -f "aicm-${platform}" ] || [ ! -s "aicm-${platform}" ]; then
+            echo "Error: Failed to download aicm-${platform} or file is empty"
+            exit 1
+          fi
+          
+          sha256=$(sha256sum "aicm-${platform}" | cut -d' ' -f1)
+          PLATFORMS["${platform}"]="${sha256}"
+          echo "SHA256 for ${platform}: ${sha256}"
+        done
+        
+        # Export to environment for next steps
+        echo "MACOS_ARM64_SHA256=${PLATFORMS[aarch64-apple-darwin]}" >> $GITHUB_ENV
+        echo "MACOS_INTEL_SHA256=${PLATFORMS[x86_64-apple-darwin]}" >> $GITHUB_ENV
+        echo "LINUX_X86_64_SHA256=${PLATFORMS[x86_64-unknown-linux-gnu]}" >> $GITHUB_ENV
+        echo "LINUX_ARM64_SHA256=${PLATFORMS[aarch64-unknown-linux-gnu]}" >> $GITHUB_ENV
+
+    - name: Update formula
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        FORMULA_FILE="Formula/aicm.rb"
+        
+        # Create temporary file for formula update
+        cp "$FORMULA_FILE" "$FORMULA_FILE.tmp"
+        
+        # Update version URLs and SHA256 hashes
+        sed -i "s|releases/download/v[0-9]*\.[0-9]*\.[0-9]*/aicm-aarch64-apple-darwin|releases/download/v${VERSION}/aicm-aarch64-apple-darwin|g" "$FORMULA_FILE.tmp"
+        sed -i "s|releases/download/v[0-9]*\.[0-9]*\.[0-9]*/aicm-x86_64-apple-darwin|releases/download/v${VERSION}/aicm-x86_64-apple-darwin|g" "$FORMULA_FILE.tmp"
+        sed -i "s|releases/download/v[0-9]*\.[0-9]*\.[0-9]*/aicm-x86_64-unknown-linux-gnu|releases/download/v${VERSION}/aicm-x86_64-unknown-linux-gnu|g" "$FORMULA_FILE.tmp"
+        sed -i "s|releases/download/v[0-9]*\.[0-9]*\.[0-9]*/aicm-aarch64-unknown-linux-gnu|releases/download/v${VERSION}/aicm-aarch64-unknown-linux-gnu|g" "$FORMULA_FILE.tmp"
+        
+        # Update SHA256 hashes
+        # macOS ARM64
+        sed -i "/aarch64-apple-darwin/,/sha256/ s/sha256  \"[^\"]*\"/sha256  \"${MACOS_ARM64_SHA256}\"/" "$FORMULA_FILE.tmp"
+        # macOS Intel
+        sed -i "/x86_64-apple-darwin/,/sha256/ s/sha256  \"[^\"]*\"/sha256  \"${MACOS_INTEL_SHA256}\"/" "$FORMULA_FILE.tmp"
+        # Linux x86_64
+        sed -i "/x86_64-unknown-linux-gnu/,/sha256/ s/sha256  \"[^\"]*\"/sha256  \"${LINUX_X86_64_SHA256}\"/" "$FORMULA_FILE.tmp"
+        # Linux ARM64
+        sed -i "/aarch64-unknown-linux-gnu/,/sha256/ s/sha256  \"[^\"]*\"/sha256  \"${LINUX_ARM64_SHA256}\"/" "$FORMULA_FILE.tmp"
+        
+        # Update test version assertion
+        sed -i "s/assert_match \"[0-9]*\.[0-9]*\.[0-9]*\"/assert_match \"${VERSION}\"/" "$FORMULA_FILE.tmp"
+        
+        # Remove bottle section if exists (it will be regenerated)
+        sed -i '/^  bottle do$/,/^  end$/d' "$FORMULA_FILE.tmp"
+        
+        # Replace original file
+        mv "$FORMULA_FILE.tmp" "$FORMULA_FILE"
+        
+        echo "Formula updated to version ${VERSION}"
+
+    - name: Validate formula
+      run: |
+        echo "Running brew style check..."
+        brew style .
+        
+        echo "Running brew audit check..."
+        brew audit --except=installed .
+        
+        echo "Running brew readall syntax check..."
+        brew readall --aliases --os=all --arch=all .
+
+    - name: Create branch and commit changes
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        BRANCH_NAME="update-to-v${VERSION}"
+        
+        # Configure git
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Create and switch to new branch
+        git checkout -b "$BRANCH_NAME"
+        
+        # Stage changes
+        git add Formula/aicm.rb
+        
+        # Check if there are any changes to commit
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+          exit 0
+        fi
+        
+        # Commit changes
+        git commit -m "Update aicm to v${VERSION}
+
+- Update all platform binaries to v${VERSION}
+- Update SHA256 hashes for all supported platforms
+- Update version in test assertion
+- Remove bottle section for new version
+
+🤖 Generated with GitHub Actions"
+
+    - name: Push branch and create PR
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        BRANCH_NAME="update-to-v${VERSION}"
+        
+        # Push branch
+        git push origin "$BRANCH_NAME"
+        
+        # Create PR
+        gh pr create \
+          --title "Update aicm to v${VERSION}" \
+          --body "## Summary
+- Update aicm formula to v${VERSION} with latest binary releases
+- Update SHA256 hashes for all 4 supported platforms (macOS ARM64/Intel, Linux x86_64/ARM64)
+- Update version assertion in test block
+- Remove bottle section to allow fresh bottle generation
+
+## Test plan
+- [x] Calculated SHA256 hashes for all platform binaries
+- [x] Updated Formula/aicm.rb with new version URLs and hashes
+- [x] Passed \`brew style\` validation
+- [x] Passed \`brew audit\` validation  
+- [x] Passed \`brew readall\` syntax check
+
+🤖 Generated with GitHub Actions" \
+          --base main \
+          --head "$BRANCH_NAME"
+        
+        echo "PR created successfully"
+
+    - name: Cleanup
+      run: |
+        # Remove downloaded binaries
+        rm -f aicm-*
