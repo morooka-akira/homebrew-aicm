@@ -5,29 +5,29 @@ class Aicm < Formula
 
   on_macos do
     on_arm do
-      url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.2/aicm-aarch64-apple-darwin",
+      url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.3/aicm-aarch64-apple-darwin",
               using: :nounzip
-      sha256  "5cbd73c64c1da2da15364dfd92b73470b519efd03d6acc42aac86256bbeb6371"
+      sha256  "126974ac18d980030696a427be2056b509021963a33696d6142f86b363f77068"
     end
 
     on_intel do
-      url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.2/aicm-x86_64-apple-darwin",
+      url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.3/aicm-x86_64-apple-darwin",
               using: :nounzip
-      sha256  "201271934edbb956417c8810c3585cbf8edabbc7a458accd53e1912f067eeab6"
+      sha256  "338451cbc2a6f8fbcee2fe435a19163e4fdc9fd08fed47b4474c4c1c6353b8d4"
     end
   end
 
   on_linux do
     on_intel do
-      url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.2/aicm-x86_64-unknown-linux-gnu",
+      url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.3/aicm-x86_64-unknown-linux-gnu",
               using: :nounzip
-      sha256  "d773b2aebac3e86a4847947eee97c663b9e20eaf0f36dcbe654b705752985281"
+      sha256  "cd307e9e3f8f2ef8d213013b14505200d2f8492bbfefb4f1e1d83b84142705a2"
     end
 
     on_arm do
-      url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.2/aicm-aarch64-unknown-linux-gnu",
+      url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.3/aicm-aarch64-unknown-linux-gnu",
               using: :nounzip
-      sha256  "3a688082ce8342bde9c9277e4ed05c57202d7e3aada80abeeed6428fa862a921"
+      sha256  "055cff13fd4db4cc63f6afcba656f68b6999edcb820845c16f545e9b2813165d"
     end
   end
 
@@ -38,6 +38,6 @@ class Aicm < Formula
   end
 
   test do
-    assert_match "0.1.2", shell_output("#{bin}/aicm --version")
+    assert_match "0.1.3", shell_output("#{bin}/aicm --version")
   end
 end
