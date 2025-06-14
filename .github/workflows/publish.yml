@@ -1,13 +1,14 @@
 name: brew pr-pull
 
 on:
-  pull_request_target:
-    types:
-      - labeled
+  # Disabled - Formula uses direct binary downloads, bottles not needed
+  # pull_request_target:
+  #   types:
+  #     - labeled
 
 jobs:
   pr-pull:
-    if: contains(github.event.pull_request.labels.*.name, 'pr-pull')
+    if: false # Disabled - direct binary downloads used instead of bottles
     runs-on: ubuntu-22.04
     permissions:
       actions: read
