@@ -3,11 +3,6 @@ class Aicm < Formula
   homepage  "https://github.com/morooka-akira/aicm"
   license "MIT"
 
-  bottle do
-    root_url "https://github.com/morooka-akira/homebrew-aicm/releases/download/bottles"
-    rebuild 2
-  end
-
   on_macos do
     on_arm do
       url     "https://github.com/morooka-akira/aicm/releases/download/v0.1.3/aicm-aarch64-apple-darwin",
