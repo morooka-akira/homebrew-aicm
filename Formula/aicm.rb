@@ -4,7 +4,11 @@ class Aicm < Formula
   license "MIT"
 
   bottle do
-    rebuild 2
+    root_url "https://github.com/morooka-akira/homebrew-aicm/releases/download/aicm-64-unknown-linux-gnu"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "bf4e117115c2f57881677772a335ac1bf81209830d783199df782bb78ce1659a"
+    sha256 cellar: :any_skip_relocation, ventura:       "fc833a29034e83ac9ad7453af0f69247bc6020a8ba2ef0a1d9d76263163dc310"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8ac8eb87e5b461491181344ff1262e6442a2d50586269e68b7a3dd40c4921849"
   end
 
   on_macos do
