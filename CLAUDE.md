@@ -55,4 +55,3 @@ Key formula requirements:
 5. Run validation commands before committing
 6. Use branch naming: `update-to-v{VERSION}`
 
-The formula was migrated from `aicd` to `aicm` for consistency.
