@@ -4,6 +4,7 @@ class Aicm < Formula
   license "MIT"
 
   bottle do
+    root_url "https://github.com/morooka-akira/homebrew-aicm/releases/download/bottles"
     rebuild 2
   end
 
